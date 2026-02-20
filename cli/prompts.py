@@ -78,18 +78,14 @@ def confirm_subject_deletion(subject_name):
     )
     return input("Digite \"sim\" para confirmar: ").strip().lower() == "sim"
 
-def run_menu(options_factory: Callable, show_function: Callable):
+def run_menu(options_factory: Callable, view: Callable):
     while True: 
         options = options_factory()
-
-        if not options:
-            show_function([])
-            return 
         
         labels = list(options.keys())
         actions = list(options.values())
 
-        show_function(labels)
+        view(labels)
 
         choice = get_option(len(options))
         if not choice: return
