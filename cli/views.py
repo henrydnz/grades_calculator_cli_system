@@ -1,4 +1,4 @@
-from cli.formatting import format_grade, console_print, bold, itemize, sep, title
+from cli.formatting import format_grade, console_print, bold, itemize, sep, title, err, pause
 from models.subject import Subject
 
 def display_grades(subject: Subject) -> None:
@@ -15,23 +15,21 @@ def display_subject_summary(subject: Subject) -> None:
     console_print(f"Status: {bold(subject.get_status())}")
     sep()
 
-
-
-
-
-
-
-# TODO IMPORTANT: HANDLE EMPTY OPTIONS (RETURN) !!!!!!!!!!!!!!!!!
-
-def show_subject_menu(options, subject):
+def show_subject_menu(subject_options: list[str], subject: Subject):
     title(f"{subject.name} - resumo")
     display_subject_summary(subject)
-    itemize(options)
+    itemize(subject_options)
     console_print(f"[bold yellow][Enter][/bold yellow]   Voltar (Escolher Materia)") 
 
-def show_subject_selection_menu(options):
+def show_subject_selection_menu(subject_list: list[str]):
     title("selecionar materia")
-    itemize(options)
+
+    if not subject_list:
+        err("Nenhuma materia cadastrada!")
+        pause()
+        return
+    
+    itemize(subject_list)
     console_print(f"[bold yellow][Enter][/bold yellow]   Voltar (Menu Principal)\n") 
 
 def show_main_menu(options, filename):
@@ -41,16 +39,29 @@ def show_main_menu(options, filename):
     console_print(f"[bold yellow][Enter][/bold yellow]   Voltar (Save Selection)") 
 
 def show_save_menu(options):
-    title("grade calc system - save selection")
+    title("grade calc system - save menu")
     itemize(options)
     console_print(f"[bold yellow][Enter][/bold yellow]   Quit")
 
-def show_save_selection_menu(options) -> str | None:
+def show_save_selection_menu(file_list: list[str]) -> str | None:
     title("carregar save")
-    itemize(options)
+
+    if not file_list:
+        err("Nenhum save existente!")
+        print("Crie um save para carregar.")
+        pause()
+        return
+
+    itemize(file_list)
     console_print(f"[bold yellow][Enter][/bold yellow]   Voltar (Save Menu)") 
 
-def show_delete_save_menu(options):
+def show_delete_save_menu(file_list: list[str]):
     title("deletar save")
-    itemize(options)
+
+    if not file_list:
+        err("Nenhum save existente!") 
+        pause()
+        return 
+    
+    itemize(file_list)
     console_print(f"[bold yellow][Enter][/bold yellow]   Voltar (Save Menu)") 
