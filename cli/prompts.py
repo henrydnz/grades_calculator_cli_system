@@ -1,11 +1,9 @@
 
 from typing import Callable
 
-from cli.formatting import err, clr_scr, console_print, itemize, title, pause
-from models.subject import Subject
-
+from cli.formatting import err, console_print
 from core.formula import validate_formula
-from core.save_manager import file_exists, list_saves
+from core.save_manager import file_exists
 
 def get_formula() -> str:
     while True:
@@ -40,8 +38,6 @@ def get_var(vars: list[str], q) -> str:
         err("Variavel invalida ou inexistente. Tente novamente:")
 
 def get_new_filename() -> str | None:
-    itemize(list_saves(), emphasis=False)
-    print()
     while True:
         name = input("Digite o nome do novo save (Enter = cancelar): ")
 
@@ -55,8 +51,6 @@ def get_new_filename() -> str | None:
             return name
         
         err("Um save com esse nome ja existe!")
-
-
 
 def get_option(option_length):
     while True: 

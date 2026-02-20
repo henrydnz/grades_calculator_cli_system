@@ -1,25 +1,46 @@
-from cli.formatting import format_grade, console_print, bold, itemize, sep, title, err, pause
+from cli.formatting import (
+    console_print, 
+    bold,
+    sep, 
+    title, 
+    err, 
+    pause,
+    format_grade
+)
 from models.subject import Subject
 
 def display_grades(subject: Subject) -> None:
-    console_print(bold("Notas registradas:"))
+    tab = " "*2
+    print("Notas registradas:")
     for var in subject.get_sorted_vars(): 
-        grade = format_grade(subject.grades[var])
-        console_print(f"{bold(var)}: {grade}")
+        console_print(f"{tab}{var}: {format_grade(subject.grades[var])}")
 
 def display_subject_summary(subject: Subject) -> None:      
-    display_grades(subject)
-    sep()
-    console_print(f"Formula: {bold(subject.formula)}")
+    console_print(f"Formula: {subject.formula}")
     console_print(f"Media Atual: {bold(format_grade(int(subject.final_grade())))}")
-    console_print(f"Status: {bold(subject.get_status())}")
+    console_print(f"Status: {bold(subject.get_status())}\n")
+    display_grades(subject)
+    print()
+
+def show_options(options, enter_icon="<=="):
+    emphasis = "bold yellow"
+    format_op = lambda i: f"[{emphasis}]{i}[/{emphasis}]"
+    tab = " "*2
     sep()
+    for i, s in enumerate(options, 1):
+        console_print(f"{tab}{format_op(f"{i}.")} {s}")
+    sep()
+    console_print(f"\n{format_op(f"{enter_icon} [Enter]")}")
+
+def show_edit_grades_menu(options, subject: Subject):
+    title(f"edicao de notas - {subject.name}")
+    display_grades(subject)
+    show_options(options)
 
 def show_subject_menu(subject_options: list[str], subject: Subject):
     title(f"{subject.name} - resumo")
     display_subject_summary(subject)
-    itemize(subject_options)
-    console_print(f"[bold yellow][Enter][/bold yellow]   Voltar (Escolher Materia)") 
+    show_options(subject_options)
 
 def show_subject_selection_menu(subject_list: list[str]):
     title("selecionar materia")
@@ -29,19 +50,16 @@ def show_subject_selection_menu(subject_list: list[str]):
         pause()
         return
     
-    itemize(subject_list)
-    console_print(f"[bold yellow][Enter][/bold yellow]   Voltar (Menu Principal)\n") 
+    show_options(subject_list)
 
 def show_main_menu(options, filename):
     title("grade calc system - main menu")
-    console_print(f"Save atual: [green]{filename}[/green]\n")
-    itemize(options)
-    console_print(f"[bold yellow][Enter][/bold yellow]   Voltar (Save Selection)") 
+    console_print(f"[green]>[/green] Save atual: [green]{filename}[/green]\n")
+    show_options(options)
 
 def show_save_menu(options):
     title("grade calc system - save menu")
-    itemize(options)
-    console_print(f"[bold yellow][Enter][/bold yellow]   Quit")
+    show_options(options, enter_icon="Sair")
 
 def show_save_selection_menu(file_list: list[str]) -> str | None:
     title("carregar save")
@@ -52,8 +70,7 @@ def show_save_selection_menu(file_list: list[str]) -> str | None:
         pause()
         return
 
-    itemize(file_list)
-    console_print(f"[bold yellow][Enter][/bold yellow]   Voltar (Save Menu)") 
+    show_options(file_list)
 
 def show_delete_save_menu(file_list: list[str]):
     title("deletar save")
@@ -63,5 +80,4 @@ def show_delete_save_menu(file_list: list[str]):
         pause()
         return 
     
-    itemize(file_list)
-    console_print(f"[bold yellow][Enter][/bold yellow]   Voltar (Save Menu)") 
+    show_options(file_list)

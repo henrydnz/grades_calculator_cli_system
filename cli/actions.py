@@ -39,67 +39,46 @@ def create_subject(data, filename):
     success("Nova materia salva.")
     pause()
 
-def edit_grade(data, subject, filename):
-    title(f"edicao de notas - {subject.name}")
-
-    display_grades(subject)
-
+def edit_all_grades(data, subject, filename):
     sorted_vars = subject.get_sorted_vars()
 
-    console_print(
-        "\n" +
-        "([bold yellow]1[/bold yellow] - Editar uma nota | " +
-        "[bold yellow]2[/bold yellow] - Editar todas as notas | " +
-        "[bold yellow]Enter[/bold yellow] - Voltar)"
-    )
+    sep()
+    has_changes = False
+    for var in sorted_vars:
+        query = f"{bold(var)} [{format_grade(subject.grades[var])}]: "
+        val = get_grade(query)
+        has_changes |= subject.grades[var] != val
+        subject.set_grade(var, val)
+    sep()
 
-    op = input()
-    match op:
-        case "2":
-            sep()
-            has_changes = False
-            for var in sorted_vars:
-                query = f"{bold(var)} [{format_grade(subject.grades[var])}]: "
-                val = get_grade(query)
-                has_changes |= subject.grades[var] != val
-                subject.set_grade(var, val)
-            sep()
+    if has_changes:
+        save_data(data, filename)
+        success("Alteracoes salvas.")
+    else:
+        print("Sem mudancas.")
 
-            if has_changes:
-                save_data(data, filename)
-                success("Alteracoes salvas.")
-                pause()
-                return
-            
-            print("Sem mudancas.")
-            pause()
-            return False
-        case "1":
-            sep()
-            query = "Insira a variavel que deseja editar: "
-            var = get_var(subject.get_sorted_vars(), query)
+    pause()
+    return True
 
-            query = "Insira a nova nota: "
-            val = get_grade(query, allow_empty=True)
-            sep()
+def edit_one_grade(data, subject, filename):
+    sep()
+    query = "Insira a variavel que deseja editar: "
+    var = get_var(subject.get_sorted_vars(), query)
 
-            if subject.grades[var] != val:
-                subject.set_grade(var, val)
-                success("Alteracao salva.")
-                pause()
-                return True
-            
-            print("Sem mudancas.")
-            pause()
-            return False
-        
-        case "":
-            return False
-        
-        case _:
-            err("Opcao invalida.")
-            pause()
-            return False
+    query = "Insira a nova nota: "
+    val = get_grade(query, allow_empty=True)
+    sep()
+
+    has_changes = subject.grades[var] != val
+    if has_changes:
+        subject.set_grade(var, val)
+        save_data(data, filename)
+        success("Alteracao salva.")
+    else: 
+        print("Sem mudancas.")
+    
+    pause()
+    return True
         
 def solver(subject) -> None:
     title(f"calcular variavel - {subject.name}")
