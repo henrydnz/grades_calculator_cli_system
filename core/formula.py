@@ -1,9 +1,18 @@
 from re import findall
 
 def get_variables(formula: str) -> list[str]:
-    return sorted(set(findall(r"\b[a-zA-Z_]\w*\b", formula)))
+    """ 
+    Extrai as variáveis de uma fórmula e retorna numa lista
+    """
+    return sorted(set(findall(
+        r"\b[a-zA-Z_]\w*\b",
+        formula
+    )))
 
 def validate_formula(formula: str) -> tuple[bool, str]:
+    """
+    Tenta validar uma fórmula e retorna uma string de erro em caso de falha.
+    """
     try:
         default_grades = {v: 1.0 for v in get_variables(formula)}
         eval(formula, {"__builtins__": None}, default_grades)

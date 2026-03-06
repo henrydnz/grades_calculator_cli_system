@@ -1,15 +1,23 @@
-from utils.types_and_constants import MIN_PASSING_GRADE, Grades
+"""
+Modelo para Matéria
+"""
 
+from utils.types_and_constants import MIN_PASSING_GRADE, Grades
 from dataclasses import dataclass, field
-from typing import Optional
 
 @dataclass
 class Subject:
+
     name: str
     formula: str
-    grades: dict[str, Optional[float]] = field(default_factory=dict)
+    grades: Grades = field(default_factory=dict)
 
     def to_json(self) -> dict:
+
+        """
+        Converte a Data Class Subject para dict type.
+        """
+
         return {
             "formula" : self.formula,
             "notas" : self.grades
@@ -17,6 +25,11 @@ class Subject:
     
     @classmethod
     def from_json(cls, name: str, data: dict) -> "Subject":
+
+        """
+        Converte um dict de Subject para Data Class.
+        """
+
         return cls(
             name=name,
             formula=data["formula"],
@@ -34,18 +47,24 @@ class Subject:
         return sorted(self.grades.keys())
 
     def get_filled_grades(self) -> Grades: 
+
+        """
+        Retorna um dict[str, float] contendo as notas que não são nulas.
+        """
+
         return {k: v for k, v in self.grades.items() if v is not None}
     
-    def get_missing_grades(self):
+    def get_missing_grades(self) -> list[str]:
+
+        """
+        Retorna uma list[str] contendo as variáveis de notas que são nulas.
+        """
+
         return sorted(k for k, v in self.grades.items() if v is None)
     
     def get_status(self) -> str:
-        if self.has_passed():
-            return "[green][APROVADO][/green]"
-        if self.get_missing_grades():
-            return "[blue][PENDENTE][/blue]"
-        else:
-            return "[red][REPROVADO][/red]"
-        
-    def set_grade(self, var, val):
-        self.grades[var] = val
+        return (
+            "[green][APROVADO][/green]" if self.has_passed()
+            else "[blue][PENDENTE][/blue]" if len(self.get_missing_grades()) > 0
+            else "[red][REPROVADO][/red]"
+        )
